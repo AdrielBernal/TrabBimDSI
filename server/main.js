@@ -2,6 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const pg = require('pg');
+const cors = require('cors');
 
 function getClient() {
     return new pg.Client({
@@ -21,6 +22,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use(express.static('.'));
+app.use(cors());
 
 app.post('/app/cadpessoa', (req, res) => {
     let nome = req.body.name;
@@ -47,7 +49,7 @@ app.get('/app/listpessoa', (req, res) => {
     client.connect()
     client.query("SELECT * FROM pessoa", (err, result) => {
         if (err){
-            res.jason(err)
+            res.json(err)
             return next(err)
         } else {
             res.status(200).json(result.rows)
@@ -64,7 +66,7 @@ app.post('/app/delpessoa', (req, res) => {
 
     client.query("DELETE FROM pessoa WHERE id = $1",[id], (err, result) => {
         if (err){
-            res.jason(err)
+            res.json(err)
             return next(err)
         } else {
             res.redirect("http://localhost:4200/");
@@ -87,7 +89,7 @@ app.post('/app/attpessoa', (req, res) => {
     client.query("UPDATE pessoa SET nome = $1, sobrenome = $2, sexo = $3, telefone = $4, endereco = $5 WHERE id = $6",
     [nome, sobrenome, sexo, telefone, endereco, id], (err, result) => {
         if (err){
-            res.jason(err)
+            res.json(err)
             return next(err)
         } else {
             res.redirect("http://localhost:4200/");
